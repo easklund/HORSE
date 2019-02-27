@@ -26,7 +26,7 @@ public class ClientActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_client);
 
         arrayList = new ArrayList<>();
 
@@ -58,6 +58,7 @@ public class ClientActivity extends Activity {
             }
         });
 
+        new ConnectTask().execute();
     }
 
     @Override
@@ -189,6 +190,7 @@ public class ClientActivity extends Activity {
                 @Override
                 //here the messageReceived method is implemented
                 public void messageReceived(String message) {
+                    Log.e("TCP", "Got some message");
                     //this method calls the onProgressUpdate
                     publishProgress(message);
                 }

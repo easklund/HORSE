@@ -18,7 +18,7 @@ import java.net.Socket;
  */
 public class TcpClient {
 
-    public static final String SERVER_IP = "172.20.10.3"; //your computer IP address
+    public static final String SERVER_IP = "192.168.43.243"; //your computer IP address
     public static final int SERVER_PORT = 5005;
     // message to send to the server
     private String mServerMessage;
@@ -98,6 +98,7 @@ public class TcpClient {
                 while (mRun) {
 
                     mServerMessage = mBufferIn.readLine();
+                    Log.e("TCP", "So we received some kind of a message");
 
                     if (mServerMessage != null && mMessageListener != null) {
                         //call the method messageReceived from MyActivity class

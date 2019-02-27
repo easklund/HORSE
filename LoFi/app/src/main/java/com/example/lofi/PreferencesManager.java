@@ -19,13 +19,14 @@ public class PreferencesManager {
 
     private PreferencesManager() {
 
-        mPreferenceManager = PreferenceManager.getDefaultSharedPreferences(ApplicationProvider.getContext());
+        // mPreferenceManager = PreferenceManager.getDefaultSharedPreferences(ApplicationProvider.getContext());
 
     }
 
     public String getUserName(){
-        return mPreferenceManager.getString("pref_username", null);
-    }
 
+//        return mPreferenceManager.getString("pref_username", null);
+        return "none";
+    }
 }
 
