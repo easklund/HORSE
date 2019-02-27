@@ -34,7 +34,7 @@ def main():
                     print("Connection closed")
                     connOpen = False
     except KeyboardInterrupt:
-        print("\nStop")
+        print("\nServer stopped")
         if connOpen:
             conn.close()
 
