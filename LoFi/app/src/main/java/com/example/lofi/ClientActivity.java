@@ -186,15 +186,15 @@ public class ClientActivity extends Activity {
         protected TcpClient doInBackground(String... message) {
 
             //we create a TCPClient object and
-            mTcpClient = new TcpClient(new TcpClient.OnMessageReceived() {
-                @Override
-                //here the messageReceived method is implemented
-                public void messageReceived(String message) {
-                    Log.e("TCP", "Got some message");
-                    //this method calls the onProgressUpdate
-                    publishProgress(message);
-                }
-            });
+//            mTcpClient = new TcpClient(new TcpClient.OnMessageReceived() {
+//                @Override
+//                //here the messageReceived method is implemented
+//                public void messageReceived(String message) {
+//                    Log.e("TCP", "Got some message");
+//                    //this method calls the onProgressUpdate
+//                    publishProgress(message);
+//                }
+//            });
             Log.i("run", "hello");
             mTcpClient.run();
 
