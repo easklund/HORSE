@@ -44,7 +44,7 @@ void setup() {
   gyro_x_cal /= 1000;
   gyro_y_cal /= 1000;
   gyro_z_cal /= 1000;
-  Serial.print("//calibrated");
+  Serial.println("//calibrated");
   digitalWrite(LED_BUILTIN, HIGH);
   loop_timer = micros();                                               //Reset the loop timer
 }
