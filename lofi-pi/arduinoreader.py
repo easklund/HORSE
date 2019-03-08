@@ -35,7 +35,7 @@ class ArduinoReader(threading.Thread):
 			except serial.serialutil.SerialException:
 				print("No device found at " + self._address)
 				self._addressCounter += 1 if self._addressCounter < 10 else -10
-				sleep()
+				sleep(1)
 				self._address = self._ADDR_BASE + str(self._addressCounter)
 
 	def getReading(self):
