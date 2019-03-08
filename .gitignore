@@ -13,3 +13,4 @@
 .externalNativeBuild
 .ftpconfig
 lofi-pi/sensor.ino
+*/__pycache__/

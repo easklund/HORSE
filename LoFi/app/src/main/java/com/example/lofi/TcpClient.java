@@ -100,7 +100,6 @@ public class TcpClient {
                 while (mRun) {
 
                     mServerMessage = mBufferIn.readLine();
-                    Log.e("TCP", "So we received some kind of a message");
 
                     if (mServerMessage != null && mMessageListener != null) {
                         //call the method messageReceived from MyActivity class

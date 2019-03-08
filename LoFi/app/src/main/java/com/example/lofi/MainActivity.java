@@ -1,8 +1,11 @@
 package com.example.lofi;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,14 +17,24 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
     private TcpClient mTcpClient;
     private boolean connectionRunning = false;
-    private String serverAddress = "192.168.0.40";
+    private SharedPreferences sharedPref;
+    private String serverAddress;
     private int serverPort = 5005;
+    private boolean slouching = false;
+    private boolean isReferenceSet = false;
+    private float currentAngle = 0;
+    private float referenceAngle = 0;
+    private static final float SLOUCHING_SENSITIVITY = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         setContentView(R.layout.activity_main);
+        serverAddress = sharedPref.getString("server_address", "192.168.0.40");
         ((TextView) findViewById(R.id.txtIP)).setText(serverAddress);
+        (findViewById(R.id.txtSlouching)).setVisibility(View.INVISIBLE);
+        (findViewById(R.id.btnSetReference)).setEnabled(false);
     }
 
 
@@ -48,8 +61,11 @@ public class MainActivity extends AppCompatActivity {
                 .setView(txtEnterIP)
                 .setPositiveButton("Change", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        serverAddress = txtEnterIP.getText().toString();
+                        serverAddress = txtEnterIP.getText().toString().trim();
                         ((TextView) findViewById(R.id.txtIP)).setText(serverAddress);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString("server_address", serverAddress);
+                        editor.commit();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -57,6 +73,23 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .show();
+    }
+
+    public void onSetReference(View view) {
+        this.referenceAngle = this.currentAngle;
+        isReferenceSet = true;
+        ((TextView) findViewById(R.id.txtReference)).setText("Reference is " + this.referenceAngle);
+    }
+
+    private void displaySlouching() {
+        if (slouching) {
+            (findViewById(R.id.txtSlouching)).setVisibility(View.VISIBLE);
+            findViewById(R.id.layout).setBackgroundColor(ContextCompat.getColor(this, R.color.slouchingBackground));
+        } else {
+            (findViewById(R.id.txtSlouching)).setVisibility(View.INVISIBLE);
+            findViewById(R.id.layout).setBackgroundColor(ContextCompat.getColor(this, android.R.color.background_light));
+        }
+
     }
 
     public class ConnectTask extends AsyncTask<String, String, TcpClient> {
@@ -69,9 +102,11 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     Button btnConnect = findViewById(R.id.btnConnect);
+                    Button setReference = findViewById(R.id.btnSetReference);
                     TextView txtDisplay = findViewById(R.id.txtDisplay);
 
                     btnConnect.setText("Disconnect");
+                    setReference.setEnabled(true);
                     txtDisplay.setText("Connecting...");
                 }
             });
@@ -81,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 //here the messageReceived method is implemented
                 public void messageReceived(String message) {
-                    Log.e("TCP", "Got some message");
                     //this method calls the onProgressUpdate
                     publishProgress(message);
                 }
@@ -95,8 +129,18 @@ public class MainActivity extends AppCompatActivity {
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
 
-            TextView display = (TextView) findViewById(R.id.txtDisplay);
-            display.setText(values[0]);
+            TextView display = findViewById(R.id.txtDisplay);
+            String input = values[0];
+            display.setText(input);
+
+            float newAngle = Float.parseFloat(input);
+            currentAngle = newAngle;
+
+            if (isReferenceSet) {
+                slouching = (newAngle - referenceAngle >= SLOUCHING_SENSITIVITY);
+                displaySlouching();
+            }
+
             //in the arrayList we add the messaged received from server
 //            arrayList.add(values[0]);
             // notify the adapter that the data set has changed. This means that new message received
@@ -109,11 +153,11 @@ public class MainActivity extends AppCompatActivity {
      * Disconnects using a background task to avoid doing long/network operations on the UI thread
      */
     public class DisconnectTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            Log.e("TCP", "onPreExecure");
-        }
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            Log.e("TCP", "onPreExecute");
+//        }
 
         @Override
         protected Void doInBackground(Void... voids) {

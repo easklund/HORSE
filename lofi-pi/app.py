@@ -1,11 +1,11 @@
 import socket
 import random
 import time
-from sensorreader import SensorReader
+from arduinoreader import ArduinoReader
 
 TCP_IP = '0.0.0.0'
 TCP_PORT = 5005
-BUFFER_SIZE = 1024
+BUFFER_SIZE = 16
 connOpen = False
 
 def main():
@@ -13,12 +13,12 @@ def main():
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.bind((TCP_IP, TCP_PORT))
 	s.listen(1)
-	sensor = SensorReader()
+	sensor = ArduinoReader()
 	sensor.start()
 
 	try:
 		while True:
-			print("Server running, waiting a connection...")
+			print("Server running, waiting for a connection...")
 
 			conn, addr = s.accept()
 			connOpen = True
@@ -26,12 +26,13 @@ def main():
 
 			while connOpen:
 				try:
-					if not sensor.isCalibrated():
-						conn.send(("Calibrating sensor...\n").encode())
-					else:
-						reading = str(round(sensor.getReading(), 2))
-						print("Sending: " + reading)
+					# if not sensor.isCalibrated():
+					# 	conn.send(("Calibrating sensor...\n").encode())
+					# else:
+					reading = sensor.getReading()
+					if reading is not None:
 						conn.send((reading + "\n").encode())
+						# print("Sending: " + reading)
 					time.sleep(0.01)
 					# data = conn.recv(BUFFER_SIZE)
 					# if not data: break

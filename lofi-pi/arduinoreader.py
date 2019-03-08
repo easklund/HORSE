@@ -1,10 +1,11 @@
 import serial
 import threading
 import re
+from time import sleep
 
 class ArduinoReader(threading.Thread):
 	_ADDR_BASE = "/dev/ttyUSB"
-	
+
 	def __init__(self):
 		threading.Thread.__init__(self)
 		self._mRun = False
@@ -27,13 +28,14 @@ class ArduinoReader(threading.Thread):
 						inputParsed = re.search("'(.*)'", str(input))
 						inputParsed = inputParsed.group(1)[:-4]
 						if inputParsed[:2] == "//": # Input is a comment
-							print("Comment from Arduino: " + inputParsed)
+							print("Comment from Arduino: " + inputParsed[2:])
 						else:
 							self._reading = inputParsed
 							self._hasSeenReading = False
 			except serial.serialutil.SerialException:
-				print("No device found at " + address)
-				self._addressCounter += 1
+				print("No device found at " + self._address)
+				self._addressCounter += 1 if self._addressCounter < 10 else -10
+				sleep()
 				self._address = self._ADDR_BASE + str(self._addressCounter)
 
 	def getReading(self):

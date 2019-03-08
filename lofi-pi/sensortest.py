@@ -9,8 +9,10 @@ if __name__ == "__main__":
 ##		while not sensor.isCalibrated():
 ##			time.sleep(1)
 		while True:
-			print(sensor.getReading())
-			time.sleep(2)
+			reading = sensor.getReading()
+			if reading is not None:
+				print(reading)
+			time.sleep(0.01)
 	except KeyboardInterrupt:
 		sensor.stop()
 

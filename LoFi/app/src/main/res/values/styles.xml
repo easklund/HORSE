@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="Slouching" parent="AppTheme">
+        <item name="android:windowBackground">@color/slouchingBackground</item>
+        <item name="android:textColor">@color/slouchingText</item>
+    </style>
+
 </resources>

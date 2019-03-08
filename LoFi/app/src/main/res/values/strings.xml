@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">LoFi</string>
+    <string name="set_angle">Set reference</string>
+    <string name="no_reference">No reference set</string>
 </resources>
