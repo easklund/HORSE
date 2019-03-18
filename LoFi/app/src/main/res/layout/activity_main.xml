@@ -21,20 +21,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.29000002" />
+        app:layout_constraintVertical_bias="0.23000002" />
 
     <Button
         android:id="@+id/btnConnect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:onClick="onClickConnect"
         android:text="Connect"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtReference" />
+        app:layout_constraintTop_toBottomOf="@+id/txtFootReference" />
 
     <Button
         android:id="@+id/btnChangeIP"
@@ -62,29 +62,52 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnSetReference"
+        android:id="@+id/btnSetBackReference"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="30dp"
-        android:onClick="onSetReference"
-        android:text="@string/set_angle"
-        app:layout_constraintEnd_toEndOf="@+id/btnConnect"
-        app:layout_constraintStart_toStartOf="@+id/btnConnect"
+        android:layout_marginEnd="8dp"
+        android:onClick="onSetBackReference"
+        android:text="Set back reference"
+        app:layout_constraintEnd_toStartOf="@+id/btnSetFootReference"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnConnect" />
 
+    <Button
+        android:id="@+id/btnSetFootReference"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:onClick="onSetFootReference"
+        android:text="Set foot reference"
+        app:layout_constraintBottom_toBottomOf="@+id/btnSetBackReference"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btnSetBackReference" />
+
     <TextView
-        android:id="@+id/txtReference"
+        android:id="@+id/txtBackReference"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/no_reference"
+        android:text="@string/no_back_reference"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtDisplay" />
 
     <TextView
-        android:id="@+id/txtSlouching"
+        android:id="@+id/txtFootReference"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/no_foot_reference"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtBackReference" />
+
+    <TextView
+        android:id="@+id/txtBackWrongPosition"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -94,7 +117,23 @@
         android:textColor="@android:color/white"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnSetReference" />
+        app:layout_constraintTop_toBottomOf="@+id/btnSetBackReference" />
+
+    <TextView
+        android:id="@+id/txtFootWrongPosition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Foot too low!"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtBackWrongPosition" />
 
 </android.support.constraint.ConstraintLayout>

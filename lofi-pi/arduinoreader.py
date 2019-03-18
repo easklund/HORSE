@@ -4,7 +4,8 @@ import re
 from time import sleep
 
 class ArduinoReader(threading.Thread):
-	_ADDR_BASE = "/dev/ttyUSB"
+	_ADDR_BASE = "/dev/tty.usbserial-142"
+	# _ADDR_BASE = "/dev/ttyUSB"
 
 	def __init__(self):
 		threading.Thread.__init__(self)

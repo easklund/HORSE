@@ -33,7 +33,7 @@ def main():
 					if reading is not None:
 						conn.send((reading + "\n").encode())
 						# print("Sending: " + reading)
-					time.sleep(0.01)
+					time.sleep(0.05)
 					# data = conn.recv(BUFFER_SIZE)
 					# if not data: break
 					# print ("received data:", data)

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -20,11 +21,20 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private String serverAddress;
     private int serverPort = 5005;
-    private boolean slouching = false;
-    private boolean isReferenceSet = false;
-    private float currentAngle = 0;
-    private float referenceAngle = 0;
-    private static final float SLOUCHING_SENSITIVITY = 20;
+    private boolean backWrongPosition = false;
+    private boolean footWrongPosition = false;
+    private boolean isBackReferenceSet = false;
+    private boolean isFootReferenceSet = false;
+    private float currentBackAngle = 0;
+    private float currentFootAngle = 0;
+    private float referenceBackAngle = 0;
+    private float referenceFootAngle = 0;
+    private boolean backIndicated = false;
+    private boolean footIndicated = false;
+    private static final float BACK_SENSITIVITY = 20;
+    private static final float FOOT_SENSITIVITY = 30;
+    private MediaPlayer backSound;
+    private MediaPlayer footSound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +43,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         serverAddress = sharedPref.getString("server_address", "192.168.0.40");
         ((TextView) findViewById(R.id.txtIP)).setText(serverAddress);
-        (findViewById(R.id.txtSlouching)).setVisibility(View.INVISIBLE);
-        (findViewById(R.id.btnSetReference)).setEnabled(false);
+        (findViewById(R.id.txtBackWrongPosition)).setVisibility(View.INVISIBLE);
+        (findViewById(R.id.txtFootWrongPosition)).setVisibility(View.INVISIBLE);
+        (findViewById(R.id.btnSetBackReference)).setEnabled(false);
+        (findViewById(R.id.btnSetFootReference)).setEnabled(false);
+
+        backSound = MediaPlayer.create(this, R.raw.back);
+        footSound = MediaPlayer.create(this, R.raw.feet);
     }
 
 
@@ -75,19 +90,43 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    public void onSetReference(View view) {
-        this.referenceAngle = this.currentAngle;
-        isReferenceSet = true;
-        ((TextView) findViewById(R.id.txtReference)).setText("Reference is " + this.referenceAngle);
+    public void onSetBackReference(View view) {
+        this.referenceBackAngle = this.currentBackAngle;
+        isBackReferenceSet = true;
+        ((TextView) findViewById(R.id.txtBackReference)).setText("Back reference is " + this.referenceBackAngle);
     }
 
-    private void displaySlouching() {
-        if (slouching) {
-            (findViewById(R.id.txtSlouching)).setVisibility(View.VISIBLE);
+    public void onSetFootReference(View view) {
+        this.referenceFootAngle = this.currentFootAngle;
+        isFootReferenceSet = true;
+        ((TextView) findViewById(R.id.txtFootReference)).setText("Foot reference is " + this.referenceFootAngle);
+    }
+
+    private void displayIncorrectPosition() {
+        if (backWrongPosition || footWrongPosition) {
             findViewById(R.id.layout).setBackgroundColor(ContextCompat.getColor(this, R.color.slouchingBackground));
         } else {
-            (findViewById(R.id.txtSlouching)).setVisibility(View.INVISIBLE);
             findViewById(R.id.layout).setBackgroundColor(ContextCompat.getColor(this, android.R.color.background_light));
+        }
+        if (backWrongPosition) {
+            (findViewById(R.id.txtBackWrongPosition)).setVisibility(View.VISIBLE);
+            if (!backIndicated) {
+                backSound.start();
+                backIndicated = true;
+            }
+        } else {
+            (findViewById(R.id.txtBackWrongPosition)).setVisibility(View.INVISIBLE);
+            backIndicated = false;
+        }
+        if (footWrongPosition) {
+            (findViewById(R.id.txtFootWrongPosition)).setVisibility(View.VISIBLE);
+            if (!footIndicated) {
+                footSound.start();
+                footIndicated = true;
+            }
+        } else {
+            (findViewById(R.id.txtFootWrongPosition)).setVisibility(View.INVISIBLE);
+            footIndicated = false;
         }
 
     }
@@ -102,11 +141,13 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     Button btnConnect = findViewById(R.id.btnConnect);
-                    Button setReference = findViewById(R.id.btnSetReference);
+                    Button setBackReference = findViewById(R.id.btnSetBackReference);
+                    Button setFootReference = findViewById(R.id.btnSetFootReference);
                     TextView txtDisplay = findViewById(R.id.txtDisplay);
 
                     btnConnect.setText("Disconnect");
-                    setReference.setEnabled(true);
+                    setBackReference.setEnabled(true);
+                    setFootReference.setEnabled(true);
                     txtDisplay.setText("Connecting...");
                 }
             });
@@ -130,16 +171,20 @@ public class MainActivity extends AppCompatActivity {
             super.onProgressUpdate(values);
 
             TextView display = findViewById(R.id.txtDisplay);
-            String input = values[0];
-            display.setText(input);
+            String inputs[] = values[0].split(", ");
+            display.setText(inputs[0] + ", " + inputs[1]);
 
-            float newAngle = Float.parseFloat(input);
-            currentAngle = newAngle;
+            float newBackAngle = Float.parseFloat(inputs[0]);
+            float newFootAngle = Float.parseFloat(inputs[1]);
+            currentBackAngle = newBackAngle;
+            currentFootAngle = newFootAngle;
 
-            if (isReferenceSet) {
-                slouching = (newAngle - referenceAngle >= SLOUCHING_SENSITIVITY);
-                displaySlouching();
-            }
+            if (isBackReferenceSet)
+                backWrongPosition = (newBackAngle - referenceBackAngle >= BACK_SENSITIVITY);
+            if (isFootReferenceSet)
+                footWrongPosition = (newFootAngle - referenceFootAngle >= FOOT_SENSITIVITY);
+
+            displayIncorrectPosition();
 
             //in the arrayList we add the messaged received from server
 //            arrayList.add(values[0]);

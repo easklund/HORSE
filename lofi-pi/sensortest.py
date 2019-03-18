@@ -1,5 +1,5 @@
 import time
-from sensorreader import SensorReader
+# from sensorreader import SensorReader
 from arduinoreader import ArduinoReader
 
 if __name__ == "__main__":
@@ -12,7 +12,7 @@ if __name__ == "__main__":
 			reading = sensor.getReading()
 			if reading is not None:
 				print(reading)
-			time.sleep(0.01)
+			time.sleep(0.005)
 	except KeyboardInterrupt:
 		sensor.stop()
 
